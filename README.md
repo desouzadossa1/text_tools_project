@@ -1,4 +1,6 @@
-cho -e "\n## Topic" >> README.md # text_tools_project
+# text_tools_project 
+
+echo -e "\n## Topic" >> README.md # text_tools_project
 
 
 **Luxury vs Drug Store Beauty Brands: A comparative analysis of Marketing language in beauty advertising**

@@ -1,0 +1,40 @@
+!/bin/bash
+
+# This script counts word frequencies, displays frequent words, 
+# calculates token and type counts, and filters sensory/emotional words.
+
+# Count word frequencies for luxury and daily tokens
+echo "Counting word frequencies..."
+sort luxury_tokens_clean.txt | uniq -c | sort -nr > luxury_word_frequencies.txt
+echo "  -> luxury_word_frequencies.txt created."
+
+sort daily_tokens_clean.txt | uniq -c | sort -nr > daily_word_frequencies.txt
+echo "  -> daily_word_frequencies.txt created."
+
+# Display the top 20 frequent words in luxury tokens
+echo -e "\nTop 20 frequent words in luxury_tokens_clean.txt:"
+sort luxury_tokens_clean.txt | uniq -c | sort -nr | head -20
+
+#  Token count (number of words) in luxury and daily product name files
+echo -e "\nCount of tokens (words) in the product name files:"
+echo "  luxury_product_names.txt:"
+wc -w luxury_product_names.txt
+
+echo "  daily_product_names.txt:"
+wc -w daily_product_names.txt
+
+# Type count (number of unique words) using raw tokens
+echo -e "\nType count (unique words) in the raw token files:"
+
+echo "  For luxury_tokens.txt:"
+tr ' ' '\n' < luxury_tokens.txt | sort | uniq | wc -l
+
+echo "  For daily_tokens.txt:"
+tr ' ' '\n' < daily_tokens.txt | sort | uniq | wc -l
+
+# Filter frequencies by a special word list (sensory_emotional_words.txt)
+echo -e "\nFiltering sensory/emotional words from luxury_word_frequencies.txt..."
+grep -wFf sensory_emotional_words.txt luxury_word_frequencies.txt > luxury_sensory_frequencies.txt
+echo "  -> luxury_sensory_frequencies.txt created."
+
+echo -e "\nAnalysis script completed successfully!"

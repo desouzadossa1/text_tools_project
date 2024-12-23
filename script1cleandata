@@ -1,0 +1,38 @@
+!/bin/bash
+
+# This script selects and processes luxury vs. daily beauty brands
+
+#  Create a list of luxury brands
+echo -e "Algenist\nalpyn beauty\nArmani Beauty\nAnastasia Beverly Hills\nbareMinerals\nBeautyBio\nBenefit Cosmetics\nBobbi Brown\nBURBERRY\nCaudalie\nCarolina Herrera\nCHANEL\nCharlotte Tilbury\nChloé\nClarins\nCLINIQUE\nDior\nEstée Lauder\nFaceGym\nGucci\nIT Cosmetics\nLaura Mercier\nLAWLESS\nMAKE UP FOR EVER\nMAKEUP BY MARIO\nNARS\nTatcha\nTOM FORD\nValentino" > luxury_select_brands.txt
+
+# Create a list of daily (affordable) brands
+echo -e "Alpha-H\nAmi Colé\nbeautyblender\nBiossance\nBondiBoost\nBREAD BEAUTY SUPPLY\nBriogeo\nBy Rosie Jane\ncaliray\nCAY SKIN\nCeremonia\nCOLOR WOW\nCommunity Sixty-Six\nCurlsmith\ndae\nDAMDAM\nDanessa Myricks Beauty\nDermalogica\nDrunk Elephant\nFenty Beauty by Rihanna\nFenty Skin\nRare Beauty by Selena Gomez\nGlossier\nHAUS LABS BY LADY GAGA\nHUDA BEAUTY\nILIA\ninnisfree\nIsle of Paradise\nMario Badescu\nSEPHORA COLLECTION\ntarte\nThe Ordinary\nPaula's Choice" > daily_select_brands.txt
+
+# Preview the first 5 lines of the original CSV
+echo "Previewing the first 5 lines of product_info.csv:"
+head -n 5 product_info.csv
+
+# Extract the correct columns (brand_name and product_name)
+cut -d ',' -f2,4 product_info.csv > relevant_data.csv
+
+#  Convert to lowercase and remove non-alphanumeric except commas and spaces
+tr '[:upper:]' '[:lower:]' < relevant_data.csv > cleaned_data_lower.csv
+sed 's/[^a-z0-9 ,]//g' cleaned_data_lower.csv > cleaned_data.csv
+
+#  Split data by brand category (luxury vs daily)
+grep -iFf luxury_select_brands.txt cleaned_data.csv > luxury_data.csv
+grep -iFf daily_select_brands.txt cleaned_data.csv > daily_data.csv
+
+#  Extract product names for each category
+cut -d ',' -f1 luxury_data.csv > luxury_product_names.txt
+cut -d ',' -f1 daily_data.csv > daily_product_names.txt
+
+#  Tokenize (split words by space)
+tr ' ' '\n' < luxury_product_names.txt > luxury_tokens.txt
+tr ' ' '\n' < daily_product_names.txt > daily_tokens.txt
+
+#  Remove empty lines
+sed '/^$/d' luxury_tokens.txt > luxury_tokens_clean.txt
+sed '/^$/d' daily_tokens.txt > daily_tokens_clean.txt
+
+echo "Script completed successfully!"
